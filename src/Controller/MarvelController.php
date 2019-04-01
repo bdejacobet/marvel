@@ -1,23 +1,38 @@
 <?php
 namespace App\Controller;
 
-use Symfony\Component\HttpClient\HttpClient;
+use App\ApiClient\MarvelApiClient;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 class MarvelController
 {
-    public function index()
+    /**
+     * MarvelApiClient
+     */ 
+    private $marvelApiClient;
+
+    public function __construct(
+        MarvelApiClient $marvelApiClient
+    ) {
+        $this->marvelApiClient = $marvelApiClient;
+    }
+
+    /**
+     * @Route("/characters")
+     */
+    public function characters()
     {
-        $client = HttpClient::create();
-
-        $url = 'https://symfony.com/versions.json';
-
-        $response = $client->request('GET', $url);
-
+        $response = $this->marvelApiClient->getCharacters();
         dump($response->toArray());
 
-        return new Response(
-            '<html><body>marvel to test api</body></html>'
-        );
+        $characterHtml = '';
+        foreach ($response->toArray()['data']['results'] as $character) {
+            $characterHtml .= sprintf('<li>%s</li>', $character['name']);
+        }
+
+        $html = sprintf('<html><body><ul>%s</ul></body></html>', $characterHtml);
+
+        return new Response($html);
     }
 }

@@ -25,3 +25,10 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    App\ApiClient\MarvelApiClient:
+        arguments:
+            $apiPublicKey:  '%env(MARVEL_PUBLIC_KEY)%'
+            $apiPrivateKey: '%env(MARVEL_PRIVATE_KEY)%'
+
+
