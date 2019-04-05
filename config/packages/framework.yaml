@@ -15,3 +15,9 @@ framework:
     #fragments: true
     php_errors:
         log: true
+
+#    http_client:
+#        scoped_clients:
+#            marvel_client_with_config:
+#                base_uri: https://gateway.marvel.com/v1/public
+#                headers:

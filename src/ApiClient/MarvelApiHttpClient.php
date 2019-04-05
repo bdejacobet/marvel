@@ -1,10 +1,12 @@
 <?php
 namespace App\ApiClient;
 
+use Symfony\Component\HttpClient\Exception\ClientException;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\HttpClient\ResponseInterface;
 use Symfony\Component\HttpClient\HttpClient;
 
-class MarvelApiClient
+class MarvelApiHttpClient
 {
     /**
      * HttpClient
@@ -37,7 +39,7 @@ class MarvelApiClient
     ) {
         $this->apiPublicKey  = $apiPublicKey;
         $this->apiPrivateKey = $apiPrivateKey;
-        $this->client        = HttpClient::create();
+        $this->httpClient    = HttpClient::create();
         $this->ts            = '1';
         $this->hash          = md5(sprintf('%s%s%s', $this->ts, $this->apiPrivateKey, $this->apiPublicKey));
     }
@@ -54,14 +56,15 @@ class MarvelApiClient
             ]
         ];
 
-        $response = $this->client->request('GET', $url, $options);
+        $response = $this->httpClient->request('GET', $url, $options);
 
         return $response->toArray()['data']['results'];
     }
 
     public function getCharactersOneByOne(): array
     {
-        $return = $responses= [];
+        $characterIds = [1011334, 1009144, 1, 1010699];
+        $characters = $responses = [];
 
         $options = [
             'query' => [
@@ -71,15 +74,29 @@ class MarvelApiClient
             ]
         ];
 
-        foreach ([1011334, 1009144, 1010699] as $characterId) {
-            $url         = sprintf('https://gateway.marvel.com/v1/public/characters/%d', $characterId);
-            $responses[] = $this->client->request('GET', $url, $options);
+        // Concurrent request
+        foreach ($characterIds as $characterId) {
+            $url = sprintf('https://gateway.marvel.com/v1/public/characters/%d', $characterId);
+            $responses[] = $this->httpClient->request('GET', $url, $options);
         }
 
+        // Without exception
         foreach ($responses as $response) {
-            $return[] = $response->toArray()['data']['results'][0];
+            if (Response::HTTP_OK === $response->getStatusCode()) {
+                $characters[] = $response->toArray()['data']['results'][0];
+            }
         }
 
-        return $return;
+        // With exception
+//        foreach ($responses as $response) {
+//            try {
+//                $response->getHeaders(true);
+//                $characters[] = $response->toArray()['data']['results'][0];
+//            } catch (ClientException $e) {
+//                dump($e);
+//            }
+//        }
+
+        return $characters;
     }
 }

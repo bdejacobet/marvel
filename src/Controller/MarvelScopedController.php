@@ -1,36 +1,36 @@
 <?php
 namespace App\Controller;
 
-use App\ApiClient\MarvelApiHttpClient;
+use App\ApiClient\MarvelApiHttpClientScoped;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MarvelController
+class MarvelScopedController
 {
-    private $marvelApiHttpClient;
+    private $marvelApiScopingHttpClient;
 
     public function __construct(
-        MarvelApiHttpClient $marvelApiHttpClient
+        MarvelApiHttpClientScoped $marvelApiScopingHttpClient
     ) {
-        $this->marvelApiHttpClient = $marvelApiHttpClient;
+        $this->marvelApiScopingHttpClient = $marvelApiScopingHttpClient;
     }
 
     /**
-     * @Route("/characters")
+     * @Route("/scoped-characters")
      */
     public function characters(): Response
     {
-        $characters = $this->marvelApiHttpClient->getCharacters();
+        $characters = $this->marvelApiScopingHttpClient->getCharacters();
 
         return $this->renderCharacters($characters);
     }
 
     /**
-     * @Route("/characters-one-by-one")
+     * @Route("/scoped-characters-one-by-one")
      */
     public function charactersOneByOne(): Response
     {
-        $characters = $this->marvelApiHttpClient->getCharactersOneByOne();
+        $characters = $this->marvelApiScopingHttpClient->getCharactersOneByOne();
 
         return $this->renderCharacters($characters);
     }
