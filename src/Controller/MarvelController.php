@@ -2,10 +2,12 @@
 namespace App\Controller;
 
 use App\ApiClient\MarvelApiHttpClient;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MarvelController
+
+class MarvelController extends AbstractController
 {
     private $marvelApiHttpClient;
 
@@ -22,7 +24,7 @@ class MarvelController
     {
         $characters = $this->marvelApiHttpClient->getCharacters();
 
-        return $this->renderCharacters($characters);
+        return $this->render('characters.html.twig', ['characters' => $characters]);
     }
 
     /**
@@ -32,18 +34,6 @@ class MarvelController
     {
         $characters = $this->marvelApiHttpClient->getCharactersOneByOne();
 
-        return $this->renderCharacters($characters);
-    }
-
-    private function renderCharacters(array $characters = []): Response
-    {
-        $characterHtml = '';
-        foreach ($characters as $character) {
-            $characterHtml .= sprintf('<li>%s - %s</li>', $character['id'], $character['name']);
-        }
-
-        $html = sprintf('<html><body><ul>%s</ul></body></html>', $characterHtml);
-
-        return new Response($html);
+        return $this->render('characters.html.twig', ['characters' => $characters]);
     }
 }

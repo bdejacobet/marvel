@@ -2,10 +2,11 @@
 namespace App\Controller;
 
 use App\ApiClient\MarvelApiHttpClientScoped;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MarvelScopedController
+class MarvelScopedController extends AbstractController
 {
     private $marvelApiScopingHttpClient;
 
@@ -22,7 +23,7 @@ class MarvelScopedController
     {
         $characters = $this->marvelApiScopingHttpClient->getCharacters();
 
-        return $this->renderCharacters($characters);
+        return $this->render('characters.html.twig', ['characters' => $characters]);
     }
 
     /**
@@ -32,18 +33,6 @@ class MarvelScopedController
     {
         $characters = $this->marvelApiScopingHttpClient->getCharactersOneByOne();
 
-        return $this->renderCharacters($characters);
-    }
-
-    private function renderCharacters(array $characters = []): Response
-    {
-        $characterHtml = '';
-        foreach ($characters as $character) {
-            $characterHtml .= sprintf('<li>%s - %s</li>', $character['id'], $character['name']);
-        }
-
-        $html = sprintf('<html><body><ul>%s</ul></body></html>', $characterHtml);
-
-        return new Response($html);
+        return $this->render('characters.html.twig', ['characters' => $characters]);
     }
 }

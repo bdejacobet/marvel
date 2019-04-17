@@ -1,0 +1,12 @@
+{% extends "base.html.twig" %}
+
+{% block title %}{{ parent() }} - Liste de personnages{% endblock %}
+
+{% block body %}
+    <h1>Liste de personnages</h1>
+    <ul>
+    {% for character in characters %}
+        <li>{{ character.id }} -  {{ character.name }}</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
