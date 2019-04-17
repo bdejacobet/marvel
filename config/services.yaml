@@ -35,3 +35,7 @@ services:
         arguments:
             $apiPublicKey:  '%env(MARVEL_PUBLIC_KEY)%'
             $apiPrivateKey: '%env(MARVEL_PRIVATE_KEY)%'
+
+    App\ApiClient\GitlabApiHttpClientScoped:
+        arguments:
+            $gitlabToken:  '%env(GITLAB_TOKEN)%'
